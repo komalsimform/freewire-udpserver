@@ -23,14 +23,14 @@
 <script>
     function myFunction() {
         var http = new XMLHttpRequest();
-        var url = 'http://localhost:3000/url/' + document.getElementById('commandText').value;
+        var url = 'http://simform.solutions:8084/url/' + document.getElementById('commandText').value;
         var params = document.getElementById('commandText').value;
         http.open('POST', url, true);
 
         http.onreadystatechange = function () {//Call a function when the state changes.
             console.log('success',http.responseText);
             var value = JSON.parse(http.responseText)
-            document.getElementById("txtarea").value = value.data;
+            document.getElementById("txtarea").value = value.data + ' '+ value.info;
         }
         http.send(params);
     }

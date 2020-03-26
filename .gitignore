@@ -1,0 +1,10 @@
+# Set syntax as .gitignore so we can use those files from other places
+syntax: glob
+
+### OS X specific things ###
+.DS_Store
+*.orig
+
+### Custom Frontend folders ###
+node_modules
+npm-debug.log
