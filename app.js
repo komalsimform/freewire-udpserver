@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const net = require("net");
+var netserver = net.createServer();
 var PORT = 49150;
 var mac = null;
 console.log(mac);
@@ -44,7 +45,9 @@ app.post("/selectFile/", (req, res, next) => {
     console.log('selected value====',req.body);
     var file = req.body;
     // TODO: function for select file changes
-    selectFile();
+    // netserver.bind(PORT);
+    netserver.listen(PORT);
+    selectFile(file);
     return res.json(true);
 });
 
@@ -52,6 +55,33 @@ app.post("/selectFile/", (req, res, next) => {
 app.listen(3000, () => {
     console.log("Server running on port 8084");
 });
+
+// TCP server
+
+netserver.on('connection',function(socket) { 
+      console.log('Buffer size : ' + socket.bufferSize);
+    
+      console.log('---------server details -----------------');
+    
+      var address = netserver.address();
+      var port = address.port;
+      var family = address.family;
+      var ipaddr = address.address;
+      console.log('net Server is listening at port' + port);
+      console.log('net Server ip :' + ipaddr);
+      console.log('net Server is IP4/IP6 : ' + family);
+
+});
+
+// emits when any error occurs -> calls closed event immediately after this.
+ netserver.on('error',function(error){
+    console.log('Error: ' + error);
+  });
+  
+  //emits when server is bound with server.listen
+  netserver.on('listening',function(){
+    console.log('net Server is listening!',PORT);
+  });  
 
 server.on('error', (err) => {
     console.log(`server error:\n${err.stack}`);
@@ -173,6 +203,6 @@ var saveMac = function(input){
     }
 };
 
-var selectFile = function() {
+var selectFile = function(file) {
 
 };
