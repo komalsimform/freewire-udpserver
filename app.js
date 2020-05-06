@@ -5,14 +5,21 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const net = require("net");
+const multer = require('multer');
 var netserver = net.createServer();
 var PORT = 49150;
 var mac = null;
 console.log(mac);
 var app = express();
+
+var upload = multer();
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json())
+
+app.use(bodyParser.urlencoded({extended: false, limit: '50mb'}));
+app.use(bodyParser.json());
+// for parsing multipart/form-data
+app.use(upload.array()); 
+app.use(express.static('public'));
 
 app.get('*', function (req, res) {
     res.sendfile(path.join(__dirname,"index.html"));
@@ -42,7 +49,8 @@ app.post("/configuration/", (req, res, next) => {
     }
 });
 app.post("/selectFile/", (req, res, next) => {
-    console.log('selected value====',req.body);
+    // console.log('selected value====',req.body);
+    
     var file = req.body;
     // TODO: function for select file changes
     // netserver.bind(PORT);

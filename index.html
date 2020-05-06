@@ -148,7 +148,7 @@
     }
     function selectFile(){
         var x = document.getElementById("myFile");
-        var txt = "";
+        var formData = new FormData();
         if ('files' in x) {
             if (x.files.length == 0) {
             txt = "Select file";
@@ -158,24 +158,35 @@
                 console.log('path====', path);
                 var file = x.files[0],
                     fileObject = {};
+                formData.append("file", file)
 
-                fileObject = {
-                    name: file.name,
-                    lastModified: file.lastModified,
-                    lastModifiedDate: file.lastModifiedDate,
-                    size: file.size,
-                    type: file.type,
-                    webkitRelativePath: file.webkitRelativePath
-                }
+                // fileObject = {
+                //     name: file.name,
+                //     lastModified: file.lastModified,
+                //     lastModifiedDate: file.lastModifiedDate,
+                //     size: file.size,
+                //     type: file.type,
+                //     webkitRelativePath: file.webkitRelativePath
+                // }
+                // if (FileReader && x.files && x.files.length) {
+                //     var fr = new FileReader();
+                //     fr.onload = function () {
+                //         console.log('fr.result===',fr.result)
+                //         document.getElementById('myFile').src = fr.result;
+                //     }
+                //     console.log('files====',x.files[0])
+                //     fr.readAsDataURL(x.files[0]);
+                // }
                 if ('name' in file) {
                     txt =  file.name;
                 }
+                console.log('result===',formData)
                 var http = new XMLHttpRequest();
                 var url = 'http://localhost:3000/selectFile/';
                 var params = x.files[0];
                 http.open('POST', url);
-                http.setRequestHeader('Content-type', 'application/json')
-                http.send(JSON.stringify(fileObject));
+                http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded')
+                http.send(formData);
 
                 http.onload = function () {//Call a function when the state changes.
                     console.log('success submit',http.responseText);
