@@ -6,21 +6,32 @@ const cors = require('cors');
 const path = require('path');
 const net = require("net");
 const multer = require('multer');
+var fs = require('fs');
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
+// const formidable = require('express-formidable');
 var netserver = net.createServer();
 var PORT = 49150;
 var mac = null;
 console.log(mac);
 var app = express();
-
-var upload = multer();
+// app.use(formidable());
+// var upload = multer();
 app.use(cors());
-app.use(bodyParser.json());
+
+// app.use(bodyParser.urlencoded({extended: false, limit: '50mb'}));
+app.use(bodyParser.json({limit: '50mb'}));
+// for parsing multipart/form-data
+// app.use(upload.array()); 
+// app.use(express.static('public'));
+console.log('app.js call========')
 
 app.get('*', function (req, res) {
     res.sendfile(path.join(__dirname,"index.html"));
 });
 
 app.post("/submitData/:value", (req, res, next) => {
+    console.log('submit data call=====')
     console.log('value====', req.params.value)
         saveMac(req.params.value);
         return res.json(true);
@@ -43,10 +54,44 @@ app.post("/configuration/", (req, res, next) => {
         return res.json(false);
     }
 });
+app.post("/selectFile/", multipartMiddleware, (req, res, next) => { 
+    var file = req.files;
+    // TODO: function for select file changes
+    netserver.listen(PORT);
+    selectFile(file);
+    return res.json(true);
+});
 
 app.listen(3000, () => {
-    console.log("Server running on port 8084");
+    console.log("Server running on port 3000");
 });
+
+// TCP server
+
+netserver.on('connection',function(socket) { 
+      console.log('Buffer size : ' + socket.bufferSize);
+    
+      console.log('---------server details -----------------');
+    
+      var address = netserver.address();
+      var port = address.port;
+      var family = address.family;
+      var ipaddr = address.address;
+      console.log('net Server is listening at port' + port);
+      console.log('net Server ip :' + ipaddr);
+      console.log('net Server is IP4/IP6 : ' + family);
+
+});
+
+// emits when any error occurs -> calls closed event immediately after this.
+ netserver.on('error',function(error){
+    console.log('Error: ' + error);
+  });
+  
+  //emits when server is bound with server.listen
+  netserver.on('listening',function(){
+    console.log('net Server is listening!',PORT);
+  });  
 
 server.on('error', (err) => {
     console.log(`server error:\n${err.stack}`);
@@ -167,3 +212,7 @@ var saveMac = function(input){
         console.log('mac value==',mac)
     }
 };
+
+var selectFile = function(file) {
+    console.log('select file call',file);
+}

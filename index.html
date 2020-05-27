@@ -37,6 +37,12 @@
         <p id="successmsg" style="color: green;">Mac address stored successfully</p>
         <p id="errorstringlengthmsg" style="color: red;">Please provide 12 characters</p>
     </div>
+    <div style="text-align: center;">
+        <input type="file" id="myFile" onchange="selectFile()">
+    </div>
+    <div style="text-align: center;">
+        <p type="text" id="demo"></p>
+    </div>
    
 </body>
 
@@ -48,6 +54,7 @@
         document.getElementById('errormsg').style.display = 'none';
         document.getElementById('successmsg').style.display = 'none';
         document.getElementById('errorstringlengthmsg').style.display = 'none';
+        selectFile();
     }
     function submitData() {
         var validCheck = /^[0-9a-fA-F]+$/;
@@ -138,5 +145,32 @@
         //     console.log('success test mode',http.responseText);
         // }
         // http.send(params);
+    }
+    function selectFile() {
+        var x = document.getElementById("myFile");
+        var formData = new FormData();
+        if ('files' in x) {
+            if (x.files.length == 0) {
+            txt = "Select file";
+            } else {
+                console.log('files====',x.files[0].webkitRelativePath)
+                var path = (window.URL || window.webkitURL).createObjectURL(x.files[0]);
+                console.log('path====', path);
+                var file = x.files[0],
+                    fileObject = {};
+                formData.append("file", file)
+                console.log('result===',x.files[0])
+                var http = new XMLHttpRequest();
+                var url = 'http://localhost:3000/selectFile/';
+                var params = formData;
+                http.open('POST', url);
+                http.send(formData);
+
+                http.onload = function () {//Call a function when the state changes.
+                    console.log('success submit',http.responseText);
+                }
+            }
+        }
+        document.getElementById("demo").innerHTML = txt;
     }
 </script>
