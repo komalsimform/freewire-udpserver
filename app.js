@@ -9,6 +9,7 @@ var PORT = 49150;
 var mac = null;
 console.log(mac);
 var app = express();
+var ipAddress = null;
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
@@ -32,7 +33,6 @@ app.post("/sendMode/:selectedvalue", (req, res, next) => {
     }
 });
 app.post("/configuration/", (req, res, next) => {
-    // console.log('selected value====',req.params.macvalue);
     if(mac !== null) {
         configurationCommand(mac);
         return res.json(true);
@@ -40,6 +40,15 @@ app.post("/configuration/", (req, res, next) => {
         return res.json(false);
     }
 });
+app.post("/submitIpAddress/:ipAddressVal", (req, res, next) => {
+    if(mac !== null) {
+        ipAddress = req.params.ipAddressVal;
+        return res.json(true);
+    } else {
+        return res.json(false);
+    }
+});
+
 app.post("/selectFile/", (req, res, next) => {
     console.log('selected value====',req.body);
     var file = req.body;
@@ -150,7 +159,9 @@ var configurationCommand = function(mac){
 
 // This is the function used to send command to client
 var sendServerComamnd = function(buffer){
-    server.send(buffer, PORT, '182.73.136.46', function (error, res) {
+    console.log('ip address===',ipAddress)
+    // '182.73.136.46'
+    server.send(buffer, PORT, ipAddress, function (error, res) {
         console.log(`server command: `);
 	console.log(buffer);
         if (error) {

@@ -14,7 +14,12 @@
     </div>
     <br />
     <div style="text-align: center;">
-        <button onclick="configuration()">Configuration</button>
+        <input type="text" id="inputIpAddressValue" placeholder="Enter IP address">
+        <button onclick="submitIpAddress()" onchange="changeIPAddress()" id="ipaddressbtn">Submit</button>
+    </div>
+    <br />
+    <div style="text-align: center;">
+        <button onclick="configuration()" id="configurationbtn">Configuration</button>
     </div>
     <br />
     <div style="text-align: center;">
@@ -34,8 +39,13 @@
     <br />
     <div style="text-align: center;">
         <p id="errormsg" style="color: red;">Please provide valid mac address</p>
-        <p id="successmsg" style="color: green;">Mac address stored successfully</p>
+        <p id="macaddresssuccessmsg" style="color: green;">Mac address stored successfully</p>
+        <p id="ipaddresssuccessmsg" style="color: green;">IP address stored successfully</p>
+        <p id="configsuccessmsg" style="color: green;">Configuration is successfull</p>
+        <p id="selectmodesuccesssmsg" style="color: green;">Test mode is successfull</p>
         <p id="errorstringlengthmsg" style="color: red;">Please provide 12 characters</p>
+        <p id="ipaddressmsg" style="color: red;">Please enter IP address</p>
+        <p id="validipaddressmsg" style="color: red;">Please enter valid IP address</p>
     </div>
     <!-- <div style="text-align: center;">
         <input type="file" id="myFile" onchange="selectFile()">
@@ -52,8 +62,16 @@
     window.onload = onLoad();
     function onLoad() {
         document.getElementById('errormsg').style.display = 'none';
-        document.getElementById('successmsg').style.display = 'none';
+        document.getElementById('macaddresssuccessmsg').style.display = 'none';
+        document.getElementById('ipaddresssuccessmsg').style.display = 'none';
         document.getElementById('errorstringlengthmsg').style.display = 'none';
+        document.getElementById('ipaddressmsg').style.display = 'none';
+        document.getElementById('validipaddressmsg').style.display = 'none';
+        document.getElementById('configsuccessmsg').style.display = 'none';
+        document.getElementById('selectmodesuccesssmsg').style.display = 'none';
+        document.getElementById("ipaddressbtn").disabled = true;
+        document.getElementById("configurationbtn").disabled = true;
+        document.getElementById("select").disabled = true;
         // selectFile();
     }
     function submitData() {
@@ -76,20 +94,42 @@
             http.onreadystatechange = function () {//Call a function when the state changes.
                 console.log('success submit',http.responseText);
                 // var value = JSON.parse(http.responseText)
-                    document.getElementById('successmsg').style.display = 'block';
+                    document.getElementById('macaddresssuccessmsg').style.display = 'block';
                     document.getElementById('errormsg').style.display = 'none';
+                    document.getElementById('ipaddresssuccessmsg').style.display = 'none';
+                    document.getElementById('errorstringlengthmsg').style.display = 'none';
+                    document.getElementById('ipaddressmsg').style.display = 'none';
+                    document.getElementById('validipaddressmsg').style.display = 'none';
+                    document.getElementById('configsuccessmsg').style.display = 'none';
+                    document.getElementById('selectmodesuccesssmsg').style.display = 'none';
+                    document.getElementById("ipaddressbtn").disabled = false;
+                    document.getElementById("configurationbtn").disabled = true;
+                    document.getElementById("select").disabled = true;
+                    document.getElementById('select').value = 0;
             }
             http.send(params);
         } else {
             document.getElementById('errormsg').style.display = 'block';
-            document.getElementById('successmsg').style.display = 'none';
+            document.getElementById('macaddresssuccessmsg').style.display = 'none';
+            document.getElementById('ipaddresssuccessmsg').style.display = 'none';
+            document.getElementById('errorstringlengthmsg').style.display = 'none';
+            document.getElementById('ipaddressmsg').style.display = 'none';
+            document.getElementById('validipaddressmsg').style.display = 'none';
+            document.getElementById('configsuccessmsg').style.display = 'none';
+            document.getElementById('selectmodesuccesssmsg').style.display = 'none';
         }
         } else {
             document.getElementById('errorstringlengthmsg').style.display = 'block';
+            document.getElementById('ipaddresssuccessmsg').style.display = 'none';
+            document.getElementById('errorstringlengthmsg').style.display = 'none';
+            document.getElementById('ipaddressmsg').style.display = 'none';
+            document.getElementById('validipaddressmsg').style.display = 'none';
+            document.getElementById('configsuccessmsg').style.display = 'none';
+            document.getElementById('selectmodesuccesssmsg').style.display = 'none';
         }
     }
     function selectMode() {
-        console.log('on change cl===', document.getElementById('select').value);
+        document.getElementById('configsuccessmsg').style.display = 'none';
         var selectedValue = document.getElementById('select').value;
         var http = new XMLHttpRequest();
         var url = 'http://localhost:3000/sendMode/' + selectedValue;
@@ -99,12 +139,13 @@
         http.onreadystatechange = function () {//Call a function when the state changes.
             console.log('success test mode',http.responseText);
             if(http.responseText === 'true') {
-                document.getElementById('successmsg').style.display = 'block';
+                document.getElementById('macaddresssuccessmsg').style.display = 'none';
                 document.getElementById('errormsg').style.display = 'none';
-
+                document.getElementById('selectmodesuccesssmsg').style.display = 'block';
             } else {
                 document.getElementById('errormsg').style.display = 'block';
-                document.getElementById('successmsg').style.display = 'none';
+                document.getElementById('macaddresssuccessmsg').style.display = 'none';
+                document.getElementById('selectmodesuccesssmsg').style.display = 'none';
             }
         }
         http.send(params);
@@ -119,21 +160,24 @@
         http.onreadystatechange = function () {//Call a function when the state changes.
             console.log('success configuration===',http.responseText);
             if(http.responseText === 'true') {
-                document.getElementById('successmsg').style.display = 'block';
+                document.getElementById('macaddresssuccessmsg').style.display = 'none';
                 document.getElementById('errormsg').style.display = 'none';
+                document.getElementById('ipaddressmsg').style.display = 'none';
+                document.getElementById('ipaddresssuccessmsg').style.display = 'none';
+                document.getElementById('configsuccessmsg').style.display = 'block';
 
             } else {
                 document.getElementById('errormsg').style.display = 'block';
-                document.getElementById('successmsg').style.display = 'none';
+                document.getElementById('macaddresssuccessmsg').style.display = 'none';
             }
         }
         http.send(params);
         // if (checkMacAddress) {
         //     document.getElementById('errormsg').style.display = 'none';
-        //     // document.getElementById('successmsg').style.display = 'block';
+        //     // document.getElementById('macaddresssuccessmsg').style.display = 'block';
         // } else {
         //     document.getElementById('errormsg').style.display = 'block';
-        //     // document.getElementById('successmsg').style.display = 'none';
+        //     // document.getElementById('macaddresssuccessmsg').style.display = 'none';
         // }
         // var selectedValue = document.getElementById('select').value;
         // var http = new XMLHttpRequest();
@@ -145,6 +189,51 @@
         //     console.log('success test mode',http.responseText);
         // }
         // http.send(params);
+    }
+
+    function submitIpAddress() {
+        var inputValue =  document.getElementById('inputIpAddressValue').value;
+        var ipAddressstring = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        var checkIpAddress = ipAddressstring.test(inputValue);
+       
+        if (inputValue) {
+            if (checkIpAddress) {
+            document.getElementById('errormsg').style.display = 'none';
+            document.getElementById('ipaddressmsg').style.display = 'none';
+            
+            var http = new XMLHttpRequest();
+            var url = 'http://localhost:3000/submitIpAddress/' + inputValue;
+            var params = inputValue;
+            http.open('POST', url, true);
+
+            http.onreadystatechange = function () {//Call a function when the state changes.
+                console.log('success submit',http.responseText);
+                // var value = JSON.parse(http.responseText)
+                    document.getElementById('macaddresssuccessmsg').style.display = 'none';
+                    document.getElementById('errormsg').style.display = 'none';
+                    document.getElementById('ipaddressmsg').style.display = 'none';
+                    document.getElementById('validipaddressmsg').style.display = 'none';
+                    document.getElementById('ipaddresssuccessmsg').style.display = 'block';
+                    document.getElementById("configurationbtn").disabled = false;
+                    document.getElementById("select").disabled = false;
+            }
+            http.send(params);
+        } else {
+            document.getElementById('validipaddressmsg').style.display = 'block';
+            document.getElementById('ipaddresssuccessmsg').style.display = 'none';
+        }
+        } else {
+            document.getElementById('errormsg').style.display = 'none';
+            document.getElementById('macaddresssuccessmsg').style.display = 'none';
+            document.getElementById('ipaddresssuccessmsg').style.display = 'none';
+            document.getElementById('validipaddressmsg').style.display = 'none';
+            document.getElementById('ipaddressmsg').style.display = 'block';
+        }
+    }
+
+    function changeIPAddress() {
+        document.getElementById('ipaddressmsg').style.display = 'none';
+        document.getElementById('validipaddressmsg').style.display = 'none';
     }
     // function selectFile(){
     //     var x = document.getElementById("myFile");
